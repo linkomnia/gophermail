@@ -178,7 +178,7 @@ func (m *Message) Bytes() ([]byte, error) {
 	mixedw := multipart.NewWriter(buffer)
 
 	header.Add("MIME-Version", "1.0")
-	header.Add("Content-Type", fmt.Sprintf("multipart/mixed;%s boundary=%s", crlf, mixedw.Boundary()))
+	header.Add("Content-Type", fmt.Sprintf("multipart/related;%s boundary=%s", crlf, mixedw.Boundary()))
 
 	err = writeHeader(buffer, header)
 	if err != nil {
@@ -273,10 +273,8 @@ func (m *Message) Bytes() ([]byte, error) {
 
 			if attachment.ContentID != "" {
 				header.Add("Content-ID", fmt.Sprintf(`<%s>`, attachment.ContentID))
-				header.Add("Content-Disposition", fmt.Sprintf(`inline;%s filename="%s"`, crlf, attachment.Name))
-			} else {
-				header.Add("Content-Disposition", fmt.Sprintf(`attachment;%s filename="%s"`, crlf, attachment.Name))
 			}
+			header.Add("Content-Disposition", fmt.Sprintf(`attachment;%s filename="%s"`, crlf, attachment.Name))
 
 			attachmentPart, err := mixedw.CreatePart(header)
 			if err != nil {
